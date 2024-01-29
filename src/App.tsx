@@ -1,20 +1,21 @@
-import { useState } from "react";
 import NewTodo from "./components/NewTodo";
 import TodoList from "./components/TodoList";
-import { Todo } from "./models/todo";
+import { logger } from "./components/utils/logger";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState, AppDispatch } from "./store";
+import { addTodo, removeTodo } from "./features/todo";
 
 function App() {
-	const [todos, setTodos] = useState<Todo[]>([]);
-	const handleAddTodo = (todo: string) => {
-		setTodos((prevTodos) => [
-			...prevTodos,
-			{ id: Math.random().toString(), text: todo },
-		]);
-	};
+	const todos = useSelector((state: RootState) => state.todos.todos);
+	const dispatch = useDispatch() as AppDispatch;
+
+	function handleAddTodo(todo: string) {
+		dispatch(addTodo(todo));
+		logger.info("Todo added successfully");
+	}
 	const handleDelete = (id: string) => {
-		setTodos((prevTodos) => {
-			return prevTodos.filter((todo) => todo.id !== id);
-		});
+		dispatch(removeTodo(id));
+		logger.info("Todo deleted successfully", { id });
 	};
 	return (
 		<div className="App">
